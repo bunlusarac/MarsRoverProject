@@ -24,7 +24,7 @@ public class Plateau
     
     public bool PointInPlateau(Vector2 point)
     {
-        return ((point.X > this.LowerLeftCornerPos.X && point.Y > this.LowerLeftCornerPos.Y) ||
+        return ((point.X > this.LowerLeftCornerPos.X && point.Y > this.LowerLeftCornerPos.Y) &&
                 (point.X < this.UpperRightCornerPos.X && point.Y < this.UpperRightCornerPos.Y));
     }
 }
