@@ -4,45 +4,74 @@ namespace MarsRoverProject;
 
 public static class SignalInterpreter
 {
-    // Mapping of signals to rotation angles in radians.
-    public static IDictionary<char, double> SignalAngles = new Dictionary<char, double>
-    {
-        { 'L',  Math.PI / 2 },
-        { 'R', -Math.PI / 2 },
-    };
-
-    public static void InterpretSequence(string sequence, RoverOld roverOld)
-    {
-        try
+    // Map signal chars to actual rotation directions
+    static readonly Dictionary<char, RoverRotationDirection> SignalToRotationDirection =
+        new Dictionary<char, RoverRotationDirection>()
         {
-            foreach (var signal in sequence)
+            {'L', RoverRotationDirection.L},
+            {'R', RoverRotationDirection.R}
+        };
+    
+    // Map signal chars to actual facing directions
+    static readonly Dictionary<char, RoverFacingDirection> SignalToFacingDirection =
+        new Dictionary<char, RoverFacingDirection>()
+        {
+            {'N', RoverFacingDirection.North},
+            {'E', RoverFacingDirection.East},
+            {'S', RoverFacingDirection.South},
+            {'W', RoverFacingDirection.West},
+        };
+
+
+    public static void InterpretSequence(string sequence, Rover rover)
+    {
+        var times = 0;
+        
+        foreach (var signal in sequence)
+        {
+            switch (signal)
             {
-                InterpretCharacter(signal, roverOld);
+                case 'M':
+                    ++times;
+                    break;
+                case 'L':
+                case 'R':
+                    // Perform movements in batches for scalar vector addition
+                    if (times != 0)
+                    {
+                        rover.Move(times);
+                        times = 0;
+                    }
+                    
+                    rover.Rotate(SignalToRotationDirection[signal]);
+                    break;
+                default:
+                    throw new InvalidSignalException(signal);
             }
         }
-        catch (InvalidSignalException e)
-        {
-            Console.WriteLine($"The signal {e.InvalidSignal} is invalid and could not be interpreted. Terminating...");
-            Environment.Exit(1);
-        }
-    }
 
-    private static void InterpretCharacter(char signal, RoverOld roverOld)
-    {
-        switch (signal)
+        if (times != 0)
         {
-            case 'M':
-                roverOld.MoveForward();
-                break;
-            case 'R':
-            case 'L':
-                roverOld.Rotate(SignalAngles[signal]);
-                break;
-            default:
-                var msg = $"Invalid signal ${signal} could not be interpreted as a rover command.";
-                throw new InvalidSignalException(signal, msg);
+            rover.Move(times);
         }
     }
     
-   
+    public static Plateau InterpretPlateauInitialization(string coordString)
+    {
+        var coordArray = coordString.Split(" ");
+        var coordVec = new Vector2(float.Parse(coordArray[0]), float.Parse(coordArray[1]));
+
+        return new Plateau(coordVec);
+    }
+    
+    public static Rover InterpretRoverInitialization(string roverPropsString, Plateau plateau)
+    {
+        var roverPropsArray = roverPropsString.Split(" ");
+        var roverPositionVector = new Vector2(float.Parse(roverPropsArray[0]), float.Parse(roverPropsArray[1]));
+        var roverFacingPosition = SignalToFacingDirection[char.Parse(roverPropsArray[2])];
+        var rover = new Rover(plateau, roverPositionVector, roverFacingPosition);
+        plateau.Rovers.Add(rover);
+
+        return rover;
+    }
 }
