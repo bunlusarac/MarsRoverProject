@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsRoverProject", "MarsRoverProject\MarsRoverProject.csproj", "{083A971D-80A9-4A02-8E0B-229C39E2BE57}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{083A971D-80A9-4A02-8E0B-229C39E2BE57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{083A971D-80A9-4A02-8E0B-229C39E2BE57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{083A971D-80A9-4A02-8E0B-229C39E2BE57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{083A971D-80A9-4A02-8E0B-229C39E2BE57}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
