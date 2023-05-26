@@ -40,4 +40,24 @@ public class Plateau: BaseEntity, IAggregateRoot
         return point.X >= BottomLeftCornerCoords.X && point.X <= TopRightCornerCoords.X &&
                point.Y >= BottomLeftCornerCoords.Y && point.Y <= TopRightCornerCoords.Y;
     }
+    
+    public Plateau(string coordString)
+    {
+        var coordArray = coordString.Split(" ");
+
+        if (coordArray.Length != 2)
+        {
+            throw new RoverException(RoverErrorCode.InvalidSignal);
+        }
+
+        try
+        {
+            TopRightCornerCoords = new Vector2(int.Parse(coordArray[0]), int.Parse(coordArray[1]));
+            BottomLeftCornerCoords = Vector2.Zero;
+        }
+        catch (Exception e)
+        {
+            throw new RoverException(RoverErrorCode.InvalidSignal);
+        }
+    }
 }

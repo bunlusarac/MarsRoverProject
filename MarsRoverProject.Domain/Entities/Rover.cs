@@ -23,6 +23,15 @@ public class Rover : BaseEntity
             {'R', RoverRotationDirection.R}
         };
     
+    static readonly Dictionary<char, RoverFacingDirection> SignalToFacingDirection =
+        new ()
+        {
+            {'N', RoverFacingDirection.North},
+            {'E', RoverFacingDirection.East},
+            {'S', RoverFacingDirection.South},
+            {'W', RoverFacingDirection.West},
+        };
+    
     private static readonly Vector2[] TranslationVectorTable = 
         { Vector2.UnitY, Vector2.UnitX, -Vector2.UnitY, -Vector2.UnitX } ;
 
@@ -41,10 +50,42 @@ public class Rover : BaseEntity
             FacingDirection = facingDirection;
             Position = position;
             Plateau = plateau;
+            plateau.Rovers.Add(this);
         }
         else
         {
             throw new RoverException(RoverErrorCode.OutOfBounds);
+        }
+    }
+    
+    public Rover(string roverPropsString, Plateau plateau)
+    {
+        var roverPropsArray = roverPropsString.Split(" ");
+        
+        if (roverPropsArray.Length != 3)
+        {
+            throw new RoverException(RoverErrorCode.InvalidSignal);
+        }
+        
+        try
+        {
+            var roverFacingDirection = SignalToFacingDirection[char.Parse(roverPropsArray[2])];
+            var rover = new Rover(int.Parse(roverPropsArray[0]), int.Parse(roverPropsArray[1]), roverFacingDirection,
+                plateau);
+
+            Position = new Vector2(int.Parse(roverPropsArray[0]), int.Parse(roverPropsArray[1]));
+            Plateau = plateau;
+            FacingDirection = roverFacingDirection;
+        }
+        catch (Exception e)
+        {
+            switch (e)
+            {
+                case RoverException:
+                    throw;
+                default:
+                    throw new RoverException(RoverErrorCode.InvalidSignal);
+            }
         }
     }
     
@@ -99,4 +140,6 @@ public class Rover : BaseEntity
             Move(times);
         }
     }
+    
+   
 }

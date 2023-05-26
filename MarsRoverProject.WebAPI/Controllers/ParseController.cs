@@ -24,14 +24,12 @@ public class ParseController : ControllerBase
         }
 
         var lines = body.Split("\r\n");
-        var plateau = SignalInterpreter.InterpretPlateauInitialization(lines[0]);
+        var plateau = new Plateau(lines[0]);
 
         for (int i = 1; i != lines.Length; i += 2)
         {
-            var rover = SignalInterpreter.InterpretRoverInitialization(lines[i], plateau);
+            var rover = new Rover(lines[i], plateau);
             rover.InterpretSequence(lines[i+1]);
-            
-            plateau.AddRover(rover);
         }
 
         var plateauDto = new PlateauDto()
