@@ -25,7 +25,7 @@ public class RoverUnitTests : IDisposable
     public void RoversCanBeCreatedInBounds()
     {
         var inBoundsRover = new Rover(2, 2, RoverFacingDirection.North, plateau);
-        var exception = Record.Exception(() => plateau.AddRover(inBoundsRover));
+        var exception = Record.Exception(() => plateau.Rovers.Add(inBoundsRover));
         Assert.Null(exception);
     }
 
@@ -41,7 +41,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveOnceTowardsNorth()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.North, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move());
         Assert.Null(exception);
@@ -52,7 +52,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveOnceTowardsSouth()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.South, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move());
         Assert.Null(exception);
@@ -63,7 +63,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveOnceTowardsEast()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.East, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move());
         Assert.Null(exception);
@@ -74,7 +74,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveOnceTowardsWest()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.West, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move());
         Assert.Null(exception);
@@ -85,7 +85,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveMultipleTimesTowardsNorth()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.North, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move(2));
         Assert.Null(exception);
@@ -96,7 +96,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveMultipleTimesTowardsSouth()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.South, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move(2));
         Assert.Null(exception);
@@ -107,7 +107,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveMultipleTimesTowardsEast()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.East, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move(2));
         Assert.Null(exception);
@@ -118,7 +118,7 @@ public class RoverUnitTests : IDisposable
     public void MovingRoverOutOfBoundsFromTopBorderThrowsRoverException()
     {
         var rover = new Rover(5, 5, RoverFacingDirection.North, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
 
         Assert.Throws<RoverException>(() => rover.Move(1));
     }
@@ -127,7 +127,7 @@ public class RoverUnitTests : IDisposable
     public void MovingRoverOutOfBoundsFromRightBorderThrowsRoverException()
     {
         var rover = new Rover(5, 5, RoverFacingDirection.East, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
 
         Assert.Throws<RoverException>(() => rover.Move(1));
     }
@@ -136,7 +136,7 @@ public class RoverUnitTests : IDisposable
     public void MovingRoverOutOfBoundsFromBottomBorderThrowsRoverException()
     {
         var rover = new Rover(0, 0, RoverFacingDirection.South, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
 
         Assert.Throws<RoverException>(() => rover.Move(1));
     }
@@ -145,7 +145,7 @@ public class RoverUnitTests : IDisposable
     public void MovingRoverOutOfBoundsFromLeftBorderThrowsRoverException()
     {
         var rover = new Rover(0, 0, RoverFacingDirection.West, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
 
         Assert.Throws<RoverException>(() => rover.Move(1));
     }
@@ -154,7 +154,7 @@ public class RoverUnitTests : IDisposable
     public void RoverCanMoveMultipleTimesTowardsWest()
     {
         var rover = new Rover(2, 2, RoverFacingDirection.West, plateau);
-        plateau.AddRover(rover);
+        plateau.Rovers.Add(rover);
         
         var exception = Record.Exception(() => rover.Move(2));
         Assert.Null(exception);
@@ -225,5 +225,36 @@ public class RoverUnitTests : IDisposable
         var rover = new Rover(2, 2, RoverFacingDirection.West, plateau);
         rover.Rotate(RoverRotationDirection.L);
         Assert.Equal(RoverFacingDirection.South, rover.FacingDirection);
+    }
+    
+    // Signal interpretation
+    
+    [Fact]
+    public void RoverInterpretsSequenceToRotationsAndMovements()
+    {
+        var rover = new Rover(2, 2, RoverFacingDirection.East, plateau);
+        rover.InterpretSequence("LMMMRMMM");
+        Assert.Equal(new Vector2(5, 5), rover.Position);
+    }
+    
+    [Fact]
+    public void RoverCannotInterpretOobSequencesAndThrowsRoverException()
+    {
+        var rover = new Rover(2, 2, RoverFacingDirection.East, plateau);
+        Assert.Throws<RoverException>(() => rover.InterpretSequence("MMMMMMMMMMM"));
+    }
+    
+    [Fact]
+    public void RoverCannotInterpretSequencesWithInvalidSignalsAndThrowsRoverException()
+    {
+        var rover = new Rover(2, 2, RoverFacingDirection.East, plateau);
+        Assert.Throws<RoverException>(() => rover.InterpretSequence("MLRRLMXRLM"));
+    }
+    
+    [Fact]
+    public void RoverCannotInterpretSequencesWithWhitespaceAndThrowsRoverException()
+    {
+        var rover = new Rover(2, 2, RoverFacingDirection.East, plateau);
+        Assert.Throws<RoverException>(() => rover.InterpretSequence("MLRR  MXRLM"));
     }
 }

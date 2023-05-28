@@ -112,4 +112,24 @@ public class PlateauUnitTests
         var plateau = new Plateau(4, 4, 2, 2);
         Assert.False(plateau.ContainsPoint(new Vector2(5, 5)));
     }
+    
+    // Signal interpretation
+    
+    [Fact]
+    public void PlateausCanBeConstructedUsingSequences()
+    {
+        Assert.Equal((new Plateau("4 5")).TopRightCornerCoords, new Plateau(4, 5).TopRightCornerCoords);
+    }
+    
+    [Fact]
+    public void ConstructingPlateauWithInvalidSequencesThrowsRoverException()
+    {
+        Assert.Throws<RoverException>(() => new Plateau("A B"));
+    }
+    
+    [Fact]
+    public void ConstructingPlateauWithSequencesWithWhitespaceThrowsRoverException()
+    {
+        Assert.Throws<RoverException>(() => new Plateau(" 3  4"));
+    }
 }

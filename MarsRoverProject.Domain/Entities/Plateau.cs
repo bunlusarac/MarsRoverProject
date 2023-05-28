@@ -29,12 +29,7 @@ public class Plateau: BaseEntity, IAggregateRoot
         TopRightCornerCoords = new (topRightCornerX, topRightCornerY);
         BottomLeftCornerCoords = Vector2.Zero;
     }
-    
-    public void AddRover(Rover rover)
-    {
-        Rovers.Add(rover);
-    }
-    
+
     public bool ContainsPoint(Vector2 point)
     {
         return point.X >= BottomLeftCornerCoords.X && point.X <= TopRightCornerCoords.X &&
