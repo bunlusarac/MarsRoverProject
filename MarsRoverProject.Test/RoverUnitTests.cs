@@ -226,5 +226,4 @@ public class RoverUnitTests : IDisposable
         rover.Rotate(RoverRotationDirection.L);
         Assert.Equal(RoverFacingDirection.South, rover.FacingDirection);
     }
-    
 }
