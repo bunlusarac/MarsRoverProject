@@ -50,14 +50,13 @@ public class Rover : BaseEntity
             FacingDirection = facingDirection;
             Position = position;
             Plateau = plateau;
-            plateau.Rovers.Add(this);
         }
         else
         {
             throw new RoverException(RoverErrorCode.OutOfBounds);
         }
     }
-    
+
     public Rover(string roverPropsString, Plateau plateau)
     {
         var roverPropsArray = roverPropsString.Split(" ");
@@ -76,6 +75,7 @@ public class Rover : BaseEntity
             Position = new Vector2(int.Parse(roverPropsArray[0]), int.Parse(roverPropsArray[1]));
             Plateau = plateau;
             FacingDirection = roverFacingDirection;
+            plateau.Rovers.Add(this);
         }
         catch (Exception e)
         {
